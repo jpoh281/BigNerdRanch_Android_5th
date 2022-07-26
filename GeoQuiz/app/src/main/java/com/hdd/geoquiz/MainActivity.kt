@@ -22,6 +22,10 @@ class MainActivity : AppCompatActivity() {
         Question(R.string.question_asia, true)
     )
 
+    private var completedQuestions = mutableListOf<Question>()
+
+    private var correctedQuestion = mutableListOf<Question>()
+
     private var currentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,17 +79,41 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         binding.questionTextView.setText(questionTextResId)
+        changeActivated()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
+        completedQuestions.add(questionBank[currentIndex])
 
         val messageResId = if (userAnswer == correctAnswer) {
+            correctedQuestion.add(questionBank[currentIndex])
             R.string.correct_text
         } else {
             R.string.incorrect_text
         }
-
+        changeActivated()
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+        grade()
+    }
+
+    private fun changeActivated() {
+        if (completedQuestions.contains(questionBank[currentIndex])) {
+            binding.falseButton.isEnabled = false
+            binding.trueButton.isEnabled = false
+        } else {
+            binding.falseButton.isEnabled = true
+            binding.trueButton.isEnabled = true
+        }
+    }
+
+    private fun grade() {
+        if (completedQuestions.size == questionBank.size) {
+            Toast.makeText(
+                this,
+                "${correctedQuestion.size} / ${questionBank.size}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }
