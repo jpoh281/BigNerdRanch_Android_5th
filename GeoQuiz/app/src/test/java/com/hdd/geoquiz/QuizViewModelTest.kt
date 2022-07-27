@@ -1,7 +1,7 @@
 package com.hdd.geoquiz
 
 import androidx.lifecycle.SavedStateHandle
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 
 class QuizViewModelTest {
@@ -20,4 +20,20 @@ class QuizViewModelTest {
         quizViewModel.moveToNext()
         assertEquals(R.string.question_australia, quizViewModel.currentQuestionText)
     }
+
+    @Test
+    fun provideExceptedQuestionAnswer() {
+        val savedStateHandle = SavedStateHandle()
+        val quizViewModel = QuizViewModel(savedStateHandle)
+        assertTrue(quizViewModel.currentQuestionAnswer)
+    }
+
+    @Test
+    fun provideExceptedQuestionAnswer2() {
+        val savedStateHandle = SavedStateHandle(mapOf(CURRENT_INDEX_KEY to 3))
+        val quizViewModel = QuizViewModel(savedStateHandle)
+        assertFalse(quizViewModel.currentQuestionAnswer)
+    }
+
+
 }
