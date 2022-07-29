@@ -1,5 +1,6 @@
 package com.hdd.geoquiz
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import android.os.Bundle
 import com.hdd.geoquiz.databinding.ActivityCheatBinding
 
 private const val EXTRA_ANSWER_IS_TRUE = "com.hdd.geoquiz.answer_is_true"
+const val EXTRA_ANSWER_SHOWN = "com.hdd.geoquiz.answer_shown"
 
 class CheatActivity : AppCompatActivity() {
 
@@ -27,6 +29,7 @@ class CheatActivity : AppCompatActivity() {
             }
 
             binding.answerTextView.setText(answerText)
+            setAnswerShownResult(true)
         }
     }
 
@@ -36,5 +39,13 @@ class CheatActivity : AppCompatActivity() {
                 putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue)
             }
         }
+    }
+
+    private fun setAnswerShownResult(isAnswerShown: Boolean){
+        val data = Intent().apply {
+            putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown)
+        }
+
+        setResult(Activity.RESULT_OK, data)
     }
 }
