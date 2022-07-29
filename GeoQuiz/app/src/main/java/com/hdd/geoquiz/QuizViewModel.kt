@@ -18,11 +18,11 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     )
 
     var isCheater : Boolean
-        get() = savedStateHandle.get(IS_CHEATER_KEY) ?: false
-        set(value) = savedStateHandle.set(IS_CHEATER_KEY, value)
+        get() = savedStateHandle["${IS_CHEATER_KEY}_$currentIndex"] ?: false
+        set(value) = savedStateHandle.set("${IS_CHEATER_KEY}_$currentIndex", value)
 
     private var currentIndex : Int
-        get() = savedStateHandle.get(CURRENT_INDEX_KEY) ?: 0
+        get() = savedStateHandle[CURRENT_INDEX_KEY] ?: 0
         set(value) = savedStateHandle.set(CURRENT_INDEX_KEY, value)
 
     val currentQuestionAnswer: Boolean
