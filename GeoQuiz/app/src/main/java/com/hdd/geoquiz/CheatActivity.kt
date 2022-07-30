@@ -3,6 +3,8 @@ package com.hdd.geoquiz
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.hdd.geoquiz.databinding.ActivityCheatBinding
@@ -31,6 +33,8 @@ class CheatActivity : AppCompatActivity() {
             binding.answerTextView.setText(answerText)
             setAnswerShownResult(true)
         }
+
+        binding.versionText.text = "API Level ${Build.VERSION.SDK_INT}"
     }
 
     companion object {

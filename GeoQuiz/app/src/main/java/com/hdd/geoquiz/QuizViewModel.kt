@@ -1,10 +1,12 @@
 package com.hdd.geoquiz
+
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 const val CURRENT_INDEX_KEY = "CURRENT_INDEX_KEY"
 const val IS_CHEATER_KEY = "IS_CHEATER_KEY"
+const val CHEAT_COUNT = "CHEAT_COUNT"
 
 class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
@@ -17,12 +19,16 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         Question(R.string.question_asia, true)
     )
 
-    var isCheater : Boolean
-        get() = savedStateHandle.get(IS_CHEATER_KEY) ?: false
+    var isCheater: Boolean
+        get() = savedStateHandle[IS_CHEATER_KEY] ?: false
         set(value) = savedStateHandle.set(IS_CHEATER_KEY, value)
 
-    private var currentIndex : Int
-        get() = savedStateHandle.get(CURRENT_INDEX_KEY) ?: 0
+    var currentCheatCount: Int
+        get() = savedStateHandle[CHEAT_COUNT] ?: 3
+        set(value) = savedStateHandle.set(CHEAT_COUNT, value)
+
+    private var currentIndex: Int
+        get() = savedStateHandle[CURRENT_INDEX_KEY] ?: 0
         set(value) = savedStateHandle.set(CURRENT_INDEX_KEY, value)
 
     val currentQuestionAnswer: Boolean
@@ -30,6 +36,8 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
 
     val currentQuestionText: Int
         get() = questionBank[currentIndex].textResId
+
+    val maxCheatCount = 3
 
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size

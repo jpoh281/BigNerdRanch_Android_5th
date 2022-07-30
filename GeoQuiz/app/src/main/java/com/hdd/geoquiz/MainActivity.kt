@@ -27,8 +27,18 @@ class MainActivity : AppCompatActivity() {
     ) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
-            quizViewModel.isCheater =
+            val isCheater: Boolean =
                 result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+
+            if (isCheater) {
+                quizViewModel.isCheater = isCheater
+                quizViewModel.currentCheatCount -= 1
+                binding.cheatCountText.text =
+                    "${quizViewModel.currentCheatCount} / ${quizViewModel.maxCheatCount}"
+                if(quizViewModel.currentCheatCount == 0){
+                    binding.cheatButton.isEnabled = false
+                }
+            }
         }
         // Handle the result
     }
@@ -61,6 +71,9 @@ class MainActivity : AppCompatActivity() {
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
             cheatLauncher.launch(intent)
         }
+
+        binding.cheatCountText.text =
+            "${quizViewModel.currentCheatCount} / ${quizViewModel.maxCheatCount}"
 
         updateQuestion()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
