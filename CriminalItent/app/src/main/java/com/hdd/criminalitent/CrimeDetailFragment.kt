@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.hdd.criminalitent.databinding.FragmentCrimeDetailBinding
@@ -17,7 +18,8 @@ class CrimeDetailFragment : Fragment() {
             "Cannot acess binding because it is null. Is the view visible?"
         }
 
-    private lateinit var crime: Crime
+    @VisibleForTesting
+    lateinit var crime: Crime
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
