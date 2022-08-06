@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.hdd.criminalitent.databinding.ListItemCrimeBinding
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class CrimeHolder(
     private val binding: ListItemCrimeBinding
@@ -13,7 +15,7 @@ class CrimeHolder(
 
     fun bind(crime: Crime) {
         binding.crimeTitle.text = crime.title
-        binding.crimeDate.text = crime.date.toString()
+        binding.crimeDate.text = formatMMMM_MM_yyyy().format(crime.date)
 
         binding.root.setOnClickListener {
             Toast.makeText(binding.root.context, "${crime.title} clicked", Toast.LENGTH_SHORT)
@@ -25,6 +27,14 @@ class CrimeHolder(
         } else {
             View.GONE
         }
+    }
+
+    fun formatEEEE_MMMM_MM_yyyy() : DateFormat {
+        return SimpleDateFormat("EEEE, MMMM MM, yyyy")
+    }
+
+    fun formatMMMM_MM_yyyy() : DateFormat {
+        return SimpleDateFormat("MMMM MM, yyyy")
     }
 
 }
