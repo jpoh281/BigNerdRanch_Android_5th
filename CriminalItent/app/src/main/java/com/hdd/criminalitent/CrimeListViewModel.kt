@@ -1,22 +1,28 @@
 package com.hdd.criminalitent
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.*
 
-class CrimeListViewModel : ViewModel() {
+private const val TAG = "CrimeListViewModel"
 
-    val crimes = mutableListOf<Crime>()
+class CrimeListViewModel : ViewModel() {
+    private val crimeRepository = CrimeRepository.get()
+
+    private val _crimes : MutableStateFlow<List<Crime>> = MutableStateFlow(emptyList())
+    val crimes: StateFlow<List<Crime>>
+        get() = _crimes.asStateFlow()
 
     init {
-        for ( i in 0 until 100){
-            val crime = Crime(
-                id = UUID.randomUUID(),
-                title = "Crime #$i",
-                date = Date(),
-                isSolved = i % 2 == 0
-            )
-
-            crimes += crime
+        viewModelScope.launch {
+            crimeRepository.getCrimes().collect {
+                _crimes.value = it
+            }
         }
     }
 }
