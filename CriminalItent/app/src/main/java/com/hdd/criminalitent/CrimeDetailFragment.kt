@@ -5,13 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.hdd.criminalitent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -32,6 +36,21 @@ class CrimeDetailFragment : Fragment() {
     private lateinit var crime: Crime
 
     private val args: CrimeDetailFragmentArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.crimeTitle.text.isEmpty()) {
+                    Toast.makeText(context, "타이틀을 입력해주셔야 합니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    findNavController().popBackStack()
+                }
+            }
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,9 +79,9 @@ class CrimeDetailFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
-                crimeDetailViewModel.crime.collect {
-                    crime -> crime?.let { updateUi(it) }
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                crimeDetailViewModel.crime.collect { crime ->
+                    crime?.let { updateUi(it) }
                 }
             }
         }
