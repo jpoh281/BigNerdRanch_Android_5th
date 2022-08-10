@@ -19,7 +19,12 @@ class DatePickerFragment : DialogFragment() {
         val dateListener =
             DatePickerDialog.OnDateSetListener { _, year: Int, month: Int, dayOfMonth: Int ->
 
-                val resultDate = GregorianCalendar(year, month, dayOfMonth).time
+                val calender = Calendar.getInstance()
+                calender.time = args.crimeDate
+                calender[Calendar.YEAR] = year
+                calender[Calendar.MONTH] = month
+                calender[Calendar.DAY_OF_MONTH] = dayOfMonth
+                val resultDate = calender.time
 
                 setFragmentResult(REQUEST_KEY_DATE, bundleOf(BUNDLE_KEY_DATE to resultDate))
             }
