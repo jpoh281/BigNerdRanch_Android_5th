@@ -32,7 +32,7 @@ class CrimeListFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.new_crime -> {
                 showNewCrime()
                 true
@@ -63,10 +63,18 @@ class CrimeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeListViewModel.crimes.collect { crimes ->
-                    binding.crimeRecyclerView.adapter = CrimeListAdapter(crimes){ crimeId ->
-                        findNavController().navigate(
-                            CrimeListFragmentDirections.showCrimeDetail(crimeId)
-                        )
+
+                    if (crimes.isEmpty()) {
+                        binding.crimeRecyclerView.visibility = View.GONE
+                        binding.emptyView.visibility = View.VISIBLE
+                    } else {
+                        binding.crimeRecyclerView.visibility = View.VISIBLE
+                        binding.emptyView.visibility = View.GONE
+                        binding.crimeRecyclerView.adapter = CrimeListAdapter(crimes) { crimeId ->
+                            findNavController().navigate(
+                                CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                            )
+                        }
                     }
                 }
             }
