@@ -2,9 +2,7 @@ package com.hdd.criminalitent
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -31,9 +29,29 @@ class CrimeDetailFragment : Fragment() {
         CrimeDetailViewModelFactory(args.crimeId)
     }
 
-    private lateinit var crime: Crime
-
     private val args: CrimeDetailFragmentArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_crime -> {
+                deleteCrime()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun deleteCrime() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            crimeDetailViewModel.deleteCrime(crimeDetailViewModel.crime.value!!)
+            findNavController().popBackStack()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,6 +89,11 @@ class CrimeDetailFragment : Fragment() {
             val newDate = bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
             crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_detail, menu)
     }
 
     override fun onDestroyView() {
