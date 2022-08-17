@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 
 
 import java.util.*
+import java.util.jar.Manifest
 
 private const val DATE_FORMAT = "EEE,MMM,dd"
 
@@ -50,6 +51,15 @@ class CrimeDetailFragment : Fragment() {
     ) { uri: Uri? ->
         uri?.let { parseContactSelection(it) }
     }
+
+    val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                // do job
+            } else {
+                // can't Job
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,6 +141,11 @@ class CrimeDetailFragment : Fragment() {
                 )
                 startActivity(chooserIntent)
             }
+
+            phoneConfrontation.setOnClickListener {
+                checkPermission()
+            }
+
             crimeSuspect.text = crime.suspect.ifEmpty {
                 getString(R.string.crime_suspect_text)
             }
@@ -168,12 +183,24 @@ class CrimeDetailFragment : Fragment() {
         }
     }
 
-    private fun canResolveIntent(intent: Intent): Boolean{
-        val packageManager : PackageManager = requireActivity().packageManager
-        val resolvedActivity : ResolveInfo? = packageManager.resolveActivity(
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(
             intent,
             PackageManager.MATCH_DEFAULT_ONLY
         )
         return resolvedActivity != null
+    }
+
+    private fun checkPermission() {
+        when {
+            requireContext().applicationContext.checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED -> {
+                // do job
+            }
+            else -> {
+                requestPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+            }
+
+        }
     }
 }
