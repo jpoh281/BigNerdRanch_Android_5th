@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/ic_menu_add.xml" value="0.341" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.44224924012158057" />
+        <entry key="app/src/main/res/layout/dialog_image_view.xml" value="0.27077001013171226" />
         <entry key="app/src/main/res/layout/fragment_crime_detail.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_crime_list.xml" value="0.27077001013171226" />
         <entry key="app/src/main/res/layout/list_item_crime.xml" value="0.33" />
