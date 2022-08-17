@@ -55,7 +55,7 @@ class CrimeDetailFragment : Fragment() {
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
-                // do job
+                goDial()
             } else {
                 // can't Job
             }
@@ -196,11 +196,19 @@ class CrimeDetailFragment : Fragment() {
         when {
             requireContext().applicationContext.checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED -> {
                 // do job
+                goDial()
             }
             else -> {
                 requestPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
             }
 
         }
+    }
+
+    private fun goDial(){
+        val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:01091223968")
+        }
+        startActivity(dialIntent)
     }
 }
