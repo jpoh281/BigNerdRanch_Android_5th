@@ -32,6 +32,8 @@ private const val DATE_FORMAT = "EEE,MMM,dd"
 
 class CrimeDetailFragment : Fragment() {
 
+    var phoneNumber: String? = null
+
     private var _binding: FragmentCrimeDetailBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -172,6 +174,8 @@ class CrimeDetailFragment : Fragment() {
     private fun parseContactSelection(contactUri: Uri) {
         val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
 
+        val queryFieldsId = arrayOf(ContactsContract.Contacts._ID)
+
         val queryCursor = requireActivity().contentResolver
             .query(contactUri, queryFields, null, null, null)
 
@@ -181,6 +185,30 @@ class CrimeDetailFragment : Fragment() {
                 crimeDetailViewModel.updateCrime { oldCrime -> oldCrime.copy(suspect = suspect) }
             }
         }
+
+        val idCursor =
+            requireActivity().contentResolver.query(contactUri!!, queryFieldsId, null, null, null)
+
+
+        idCursor?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val contactId = cursor.getString(0)
+                val phoneURI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                val phoneQueryFields = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                val phoneWhereClause = "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?"
+                val phoneQueryParameters = arrayOf(contactId)
+
+                val phoneCursor = requireActivity().contentResolver
+                    .query(phoneURI, phoneQueryFields, phoneWhereClause, phoneQueryParameters, null)
+
+                phoneCursor?.use {
+                    if (phoneCursor.moveToFirst()) {
+                        phoneNumber = phoneCursor.getString(0)
+                    }
+                }
+            }
+        }
+
     }
 
     private fun canResolveIntent(intent: Intent): Boolean {
@@ -205,9 +233,9 @@ class CrimeDetailFragment : Fragment() {
         }
     }
 
-    private fun goDial(){
+    private fun goDial() {
         val dialIntent = Intent(Intent.ACTION_DIAL).apply {
-            data = Uri.parse("tel:01091223968")
+            data = Uri.parse("tel:${phoneNumber}")
         }
         startActivity(dialIntent)
     }
