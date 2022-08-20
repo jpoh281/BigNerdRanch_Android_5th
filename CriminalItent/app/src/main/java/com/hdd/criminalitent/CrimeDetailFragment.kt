@@ -57,18 +57,17 @@ class CrimeDetailFragment : Fragment() {
 
     private val takePhoto = registerForActivityResult(
         ActivityResultContracts.TakePicture()
-    ){
-            didTakePhoto: Boolean ->
+    ) { didTakePhoto: Boolean ->
         Log.d("BBBB", photoName.toString())
         if (didTakePhoto && photoName != null) {
             Log.d("BBBB", photoName.toString())
-            crimeDetailViewModel.updateCrime {
-                    oldCrime -> oldCrime.copy(photoFileName = photoName)
+            crimeDetailViewModel.updateCrime { oldCrime ->
+                oldCrime.copy(photoFileName = photoName)
             }
         }
     }
 
-    var photoName : String? = null
+    var photoName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +76,13 @@ class CrimeDetailFragment : Fragment() {
     ): View {
         _binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.crimePhoto.postDelayed(kotlinx.coroutines.Runnable {
+            view?.announceForAccessibility("AAAAAA")
+        }, 300)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -206,22 +212,22 @@ class CrimeDetailFragment : Fragment() {
         }
     }
 
-    private fun canResolveIntent(intent: Intent): Boolean{
-        val packageManager : PackageManager = requireActivity().packageManager
-        val resolvedActivity : ResolveInfo? = packageManager.resolveActivity(
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(
             intent,
             PackageManager.MATCH_DEFAULT_ONLY
         )
         return resolvedActivity != null
     }
 
-    private  fun updatePhoto(photoFileName: String?){
-        if(binding.crimePhoto.tag != photoFileName){
+    private fun updatePhoto(photoFileName: String?) {
+        if (binding.crimePhoto.tag != photoFileName) {
             val photoFile = photoFileName?.let {
                 File(requireContext().applicationContext.filesDir, it)
             }
 
-            if(photoFile?.exists() == true){
+            if (photoFile?.exists() == true) {
                 binding.crimePhoto.doOnLayout { measuredView ->
                     val scaledBitmap = getScaledBitmap(
                         photoFile.path,
@@ -230,10 +236,14 @@ class CrimeDetailFragment : Fragment() {
                     )
                     binding.crimePhoto.setImageBitmap(scaledBitmap)
                     binding.crimePhoto.tag = photoFileName
+                    binding.crimePhoto.contentDescription =
+                        getString(R.string.crime_photo_image_description)
                 }
             } else {
                 binding.crimePhoto.setImageBitmap(null)
                 binding.crimePhoto.tag = null
+                binding.crimePhoto.contentDescription =
+                    getString(R.string.crime_photo_no_image_description)
             }
         }
     }
